@@ -3,10 +3,11 @@ class auditd::params {
   # OS specific variables.
   case $::os['family'] {
     'Debian': {
-      $package_name       = 'auditd'
-      $audisp_package     = 'audispd-plugins'
-      $manage_audit_files = false
-      $rules_file         = '/etc/audit/rules.d/audit.rules'
+      $package_name        = 'auditd'
+      $audisp_package      = 'audispd-plugins'
+      $manage_audit_files  = false
+      $manage_audisp_files = false
+      $rules_file          = '/etc/audit/rules.d/audit.rules'
 
       case $::os['release']['major'] {
         '8': {
@@ -22,24 +23,27 @@ class auditd::params {
     'Suse': {
       $package_name       = 'audit'
       if versioncmp($::operatingsystemrelease, '12') >= 0 and $::operatingsystem == 'SLES' {
-        $audisp_package     = 'audit-audispd-plugins'
-        $manage_audit_files = true
-        $rules_file         = '/etc/audit/rules.d/puppet.rules'
-        $service_restart    = '/bin/systemctl restart auditd'
-        $service_stop       = '/bin/systemctl stop auditd'
+        $audisp_package      = 'audit-audispd-plugins'
+        $manage_audit_files  = true
+        $manage_audisp_files = true
+        $rules_file          = '/etc/audit/rules.d/puppet.rules'
+        $service_restart     = '/bin/systemctl restart auditd'
+        $service_stop        = '/bin/systemctl stop auditd'
       }
       else {
-        $audisp_package     = 'audispd-plugins'
-        $manage_audit_files = false
-        $rules_file         = '/etc/audit/audit.rules'
-        $service_restart    = '/etc/init.d/auditd restart'
-        $service_stop       = '/etc/init.d/auditd stop'
+        $audisp_package      = 'audispd-plugins'
+        $manage_audit_files  = false
+        $manage_audisp_files = false
+        $rules_file          = '/etc/audit/audit.rules'
+        $service_restart     = '/etc/init.d/auditd restart'
+        $service_stop        = '/etc/init.d/auditd stop'
       }
     }
     'RedHat': {
-      $package_name       = 'audit'
-      $audisp_package     = 'audispd-plugins'
-      $manage_audit_files = true
+      $package_name        = 'audit'
+      $audisp_package      = 'audispd-plugins'
+      $manage_audit_files  = true
+      $manage_audisp_files = true
 
       if $::operatingsystem != 'Amazon' and versioncmp($::operatingsystemrelease, '7') >= 0 {
         $rules_file      = '/etc/audit/rules.d/puppet.rules'
@@ -52,20 +56,22 @@ class auditd::params {
       }
     }
     'Archlinux': {
-      $package_name       = 'audit'
-      $audisp_package     = 'audit'
-      $manage_audit_files = false
-      $rules_file         = '/etc/audit/audit.rules'
-      $service_restart    = '/usr/bin/kill -s SIGHUP $(cat /var/run/auditd.pid)'
-      $service_stop       = '/usr/bin/kill -s SIGTERM $(cat /var/run/auditd.pid)'
+      $package_name        = 'audit'
+      $audisp_package      = 'audit'
+      $manage_audit_files  = false
+      $manage_audisp_files = false
+      $rules_file          = '/etc/audit/audit.rules'
+      $service_restart     = '/usr/bin/kill -s SIGHUP $(cat /var/run/auditd.pid)'
+      $service_stop        = '/usr/bin/kill -s SIGTERM $(cat /var/run/auditd.pid)'
     }
     'Gentoo': {
-      $package_name       = 'audit'
-      $audisp_package     = 'audit'
-      $manage_audit_files = false
-      $rules_file         = '/etc/audit/audit.rules'
-      $service_restart    = '/etc/init.d/auditd restart'
-      $service_stop       = '/etc/init.d/auditd stop'
+      $package_name        = 'audit'
+      $audisp_package      = 'audit'
+      $manage_audit_files  = false
+      $manage_audisp_files = false
+      $rules_file          = '/etc/audit/audit.rules'
+      $service_restart     = '/etc/init.d/auditd restart'
+      $service_stop        = '/etc/init.d/auditd stop'
     }
     default: {
       fail("${::osfamily} is not supported by auditd")

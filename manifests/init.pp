@@ -361,6 +361,7 @@ class auditd (
   # Variables for Audit files
   Stdlib::Absolutepath $rules_file = $::auditd::params::rules_file,
   Boolean $manage_audit_files      = $::auditd::params::manage_audit_files,
+  Boolean $manage_audisp_files     = $::auditd::params::manage_audisp_files,
   Integer $buffer_size             = $::auditd::params::buffer_size,
 
   # Audisp main config variables
@@ -389,7 +390,6 @@ class auditd (
     alias  => 'auditd',
     before => [
       File['/etc/audit/auditd.conf'],
-      File['/etc/audisp/audispd.conf'],
       Concat[$rules_file],
     ],
   }
@@ -426,12 +426,17 @@ class auditd (
     content => template('auditd/audit.rules.begin.fragment.erb'),
     order   => 0
   }
-  file { '/etc/audisp/audispd.conf':
-    ensure  => 'file',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0640',
-    content => template('auditd/audispd.conf.erb'),
+
+  if $::manage_audisp_files {
+    file { '/etc/audisp/audispd.conf':
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0640',
+      content => template('auditd/audispd.conf.erb'),
+      require => Package[$package_name],
+      notifiy => Service[$auditd],
+    }
   }
 
   # If a hash of rules is supplied with class then call auditd::rules defined type to apply them
@@ -451,7 +456,6 @@ class auditd (
       stop      => $service_stop,
       subscribe => [
         File['/etc/audit/auditd.conf'],
-        File['/etc/audisp/audispd.conf'],
         Concat[$rules_file],
       ],
     }
