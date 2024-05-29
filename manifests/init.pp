@@ -427,7 +427,7 @@ class auditd (
     order   => 0
   }
 
-  if $::manage_audisp_files {
+  if $manage_audisp_files {
     file { '/etc/audisp/audispd.conf':
       ensure  => 'file',
       owner   => 'root',
