@@ -1,14 +1,14 @@
 class auditd::params {
 
   # OS specific variables.
-  case $::osfamily {
+  case $::os['family'] {
     'Debian': {
       $package_name       = 'auditd'
       $audisp_package     = 'audispd-plugins'
       $manage_audit_files = false
       $rules_file         = '/etc/audit/rules.d/audit.rules'
 
-      case $::lsbmajdistrelease {
+      case $::os['release']['major'] {
         '8': {
           $service_restart = '/bin/systemctl restart auditd'
           $service_stop    = '/bin/systemctl stop auditd'
