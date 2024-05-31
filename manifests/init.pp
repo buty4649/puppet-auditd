@@ -435,7 +435,7 @@ class auditd (
       mode    => '0640',
       content => template('auditd/audispd.conf.erb'),
       require => Package[$package_name],
-      notifiy => Service[$auditd],
+      notifiy => Service['auditd'],
     }
   }
 
